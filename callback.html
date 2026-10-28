@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Lister sign-in callback</title>
+</head>
+<body style="font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;line-height:1.5;padding:0 16px">
+  <h1>Lister sign-in</h1>
+  <p>This page only displays the one-time sign-in code. Nothing is stored or sent anywhere by this page.</p>
+  <div id="ok" style="display:none">
+    <p>Copy the code below and paste it into the Lister setup on your computer. It expires within minutes and works once.</p>
+    <textarea id="code" rows="4" style="width:100%;font-family:monospace" readonly></textarea>
+    <p><button id="copy" type="button">Copy code</button></p>
+  </div>
+  <div id="err" style="display:none">
+    <p><strong>Sign-in was not completed.</strong></p>
+    <p id="reason"></p>
+    <p>Go back to the eBay sign-in page and try again.</p>
+  </div>
+  <script>
+    (function () {
+      var p = new URLSearchParams(window.location.search);
+      var code = p.get('code');
+      if (code) {
+        document.getElementById('ok').style.display = 'block';
+        document.getElementById('code').value = code;
+        document.getElementById('copy').onclick = function () {
+          navigator.clipboard.writeText(code).then(function () { document.getElementById('copy').textContent = 'Copied'; });
+        };
+      } else {
+        document.getElementById('err').style.display = 'block';
+        document.getElementById('reason').textContent = p.get('error_description') || p.get('error') || 'No code was returned.';
+      }
+      // Remove the code from the address bar so it isn't left in history.
+      if (window.history && window.history.replaceState) window.history.replaceState(null, '', window.location.pathname);
+    })();
+  </script>
+</body>
+</html>
